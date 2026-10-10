@@ -1,0 +1,109 @@
+{
+  "accuracy": 0.9992,
+  "labels": [
+    "normal",
+    "dos",
+    "probe",
+    "r2l"
+  ],
+  "confusion_matrix": [
+    [
+      299,
+      0,
+      0,
+      1
+    ],
+    [
+      0,
+      300,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      300,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      300
+    ]
+  ],
+  "classification_report": {
+    "normal": {
+      "precision": 1.0,
+      "recall": 0.9966666666666667,
+      "f1-score": 0.998330550918197,
+      "support": 300.0
+    },
+    "dos": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 300.0
+    },
+    "probe": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 300.0
+    },
+    "r2l": {
+      "precision": 0.9966777408637874,
+      "recall": 1.0,
+      "f1-score": 0.9983361064891847,
+      "support": 300.0
+    },
+    "accuracy": 0.9991666666666666,
+    "macro avg": {
+      "precision": 0.9991694352159468,
+      "recall": 0.9991666666666666,
+      "f1-score": 0.9991666643518454,
+      "support": 1200.0
+    },
+    "weighted avg": {
+      "precision": 0.9991694352159468,
+      "recall": 0.9991666666666666,
+      "f1-score": 0.9991666643518454,
+      "support": 1200.0
+    }
+  },
+  "n_train": 4800,
+  "n_test": 1200,
+  "feature_columns": [
+    "duration",
+    "src_bytes",
+    "dst_bytes",
+    "count",
+    "srv_count",
+    "serror_rate",
+    "same_srv_rate",
+    "diff_srv_rate",
+    "dst_host_count",
+    "protocol_type",
+    "service",
+    "flag"
+  ],
+  "protocols": [
+    "tcp",
+    "udp",
+    "icmp"
+  ],
+  "services": [
+    "http",
+    "ftp",
+    "smtp",
+    "dns",
+    "telnet",
+    "other"
+  ],
+  "flags": [
+    "SF",
+    "S0",
+    "REJ",
+    "RSTR"
+  ]
+}

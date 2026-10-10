@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cyber Threat Detection — ML Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">◆</span>
+    <div>
+      <h1>Cyber Threat Detection</h1>
+      <p>Machine-learning network intrusion classifier</p>
+    </div>
+  </div>
+  <div class="status-pill" id="statusPill">
+    <span class="dot" id="statusDot"></span>
+    <span id="statusText">Checking model…</span>
+  </div>
+</header>
+
+<main class="layout">
+
+  <!-- Input panel -->
+  <section class="panel" id="inputPanel">
+    <div class="panel-head">
+      <h2>Analyze a connection record</h2>
+      <div class="sample-controls">
+        <select id="sampleType">
+          <option value="random">Random</option>
+          <option value="normal">Normal</option>
+          <option value="dos">DoS</option>
+          <option value="probe">Probe</option>
+          <option value="r2l">R2L</option>
+        </select>
+        <button type="button" class="btn btn-ghost" id="sampleBtn">Generate sample</button>
+      </div>
+    </div>
+
+    <form id="trafficForm">
+      <div class="field-grid">
+        <div class="field">
+          <label for="protocol_type">Protocol</label>
+          <select id="protocol_type" name="protocol_type" required></select>
+        </div>
+        <div class="field">
+          <label for="service">Service</label>
+          <select id="service" name="service" required></select>
+        </div>
+        <div class="field">
+          <label for="flag">Connection flag</label>
+          <select id="flag" name="flag" required></select>
+        </div>
+        <div class="field">
+          <label for="duration">Duration (s)</label>
+          <input type="number" step="any" id="duration" name="duration" required>
+        </div>
+        <div class="field">
+          <label for="src_bytes">Source bytes</label>
+          <input type="number" step="any" id="src_bytes" name="src_bytes" required>
+        </div>
+        <div class="field">
+          <label for="dst_bytes">Destination bytes</label>
+          <input type="number" step="any" id="dst_bytes" name="dst_bytes" required>
+        </div>
+        <div class="field">
+          <label for="count">Connection count</label>
+          <input type="number" step="1" id="count" name="count" required>
+        </div>
+        <div class="field">
+          <label for="srv_count">Service count</label>
+          <input type="number" step="1" id="srv_count" name="srv_count" required>
+        </div>
+        <div class="field">
+          <label for="dst_host_count">Dest. host count</label>
+          <input type="number" step="1" id="dst_host_count" name="dst_host_count" required>
+        </div>
+        <div class="field">
+          <label for="serror_rate">SYN error rate</label>
+          <input type="number" step="any" min="0" max="1" id="serror_rate" name="serror_rate" required>
+        </div>
+        <div class="field">
+          <label for="same_srv_rate">Same-service rate</label>
+          <input type="number" step="any" min="0" max="1" id="same_srv_rate" name="same_srv_rate" required>
+        </div>
+        <div class="field">
+          <label for="diff_srv_rate">Diff-service rate</label>
+          <input type="number" step="any" min="0" max="1" id="diff_srv_rate" name="diff_srv_rate" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary" id="analyzeBtn">Analyze traffic</button>
+      <p class="form-error" id="formError"></p>
+    </form>
+  </section>
+
+  <!-- Result panel -->
+  <section class="panel" id="resultPanel">
+    <div class="panel-head"><h2>Detection result</h2></div>
+
+    <div class="result-empty" id="resultEmpty">
+      Fill in the form (or generate a sample) and click <strong>Analyze traffic</strong> to see a classification.
+    </div>
+
+    <div class="result-body hidden" id="resultBody">
+      <div class="verdict" id="verdict">
+        <span class="verdict-label" id="verdictLabel">—</span>
+        <span class="verdict-confidence" id="verdictConfidence">—</span>
+      </div>
+
+      <div class="prob-list" id="probList"></div>
+    </div>
+  </section>
+
+  <!-- Model performance -->
+  <section class="panel" id="statsPanel">
+    <div class="panel-head"><h2>Model performance</h2></div>
+    <div class="stats-row">
+      <div class="stat-box">
+        <span class="stat-value" id="accuracyValue">—</span>
+        <span class="stat-label">Test accuracy</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-value" id="trainSizeValue">—</span>
+        <span class="stat-label">Training records</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-value" id="testSizeValue">—</span>
+        <span class="stat-label">Test records</span>
+      </div>
+    </div>
+    <div class="cm-wrap">
+      <table class="cm-table" id="cmTable"></table>
+    </div>
+  </section>
+
+  <!-- Detection log -->
+  <section class="panel" id="logPanel">
+    <div class="panel-head">
+      <h2>Detection log</h2>
+      <button type="button" class="btn btn-ghost" id="clearLogBtn">Clear</button>
+    </div>
+    <div class="log-wrap">
+      <table class="log-table">
+        <thead>
+          <tr><th>Time</th><th>Verdict</th><th>Confidence</th><th>Protocol</th><th>Service</th></tr>
+        </thead>
+        <tbody id="logBody">
+          <tr><td colspan="5" class="log-empty">No traffic analyzed yet.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  Mini project — Cyber Threat Detection Using Machine Learning · Flask + scikit-learn
+</footer>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
